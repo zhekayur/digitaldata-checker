@@ -30,7 +30,10 @@ def get_data_layer(url):
 def flatten_data_layer(data_layer):
     flat_rows = []
     for obj in data_layer:
-        flat_rows.append({k: str(v) for k, v in obj.items()})
+        if isinstance(obj, dict):
+            flat_rows.append({k: str(v) for k, v in obj.items()})
+        else:
+            flat_rows.append({"non_dict_value": str(obj)})
     return pd.DataFrame(flat_rows)
 
 # Streamlit UI
