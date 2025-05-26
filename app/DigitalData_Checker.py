@@ -7,6 +7,9 @@ import json
 import pandas as pd
 import time
 
+# Set Streamlit config — MUST be first
+st.set_page_config(page_title="DigitalData Checker", page_icon="🔎", layout="centered")
+
 # Inject GTM into <head>
 st.markdown("""
 <!-- Google Tag Manager -->
@@ -20,7 +23,6 @@ j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
 f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-TBPNMM9H');
 </script>
-<!-- End Google Tag Manager -->
 """, unsafe_allow_html=True)
 
 # Inject GTM <noscript> into <body>
@@ -30,7 +32,6 @@ st.markdown("""
 <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBPNMM9H"
 height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-<!-- End Google Tag Manager (noscript) -->
 """, unsafe_allow_html=True)
 
 # Function to fetch digitalData using Selenium
@@ -70,7 +71,6 @@ def flatten_json(y):
     return out
 
 # Streamlit UI
-st.set_page_config(page_title="DigitalData Checker", page_icon="🔎", layout="centered")
 st.title("🔎 DigitalData Checker (Adobe)")
 
 with st.form(key="digitaldata_form"):
