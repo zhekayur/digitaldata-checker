@@ -1,7 +1,8 @@
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import json
 import pandas as pd
 import time
@@ -13,10 +14,9 @@ def get_digital_data(url):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(options=chrome_options)
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.get(url)
-
-    # wait for JavaScript to render
     time.sleep(3)
 
     try:
@@ -36,10 +36,8 @@ def flatten_json(y):
             for a in x:
                 flatten(x[a], f'{name}{a}_')
         elif isinstance(x, list):
-            i = 0
-            for a in x:
+            for i, a in enumerate(x):
                 flatten(a, f'{name}{i}_')
-                i += 1
         else:
             out[name[:-1]] = x
 
@@ -47,8 +45,8 @@ def flatten_json(y):
     return out
 
 # Streamlit UI
-st.set_page_config(page_title="DigitalData Checker", layout="centered")
-st.title("🔎 DigitalData Checker")
+st.set_page_config(page_title="DigitalData Checker", page_icon="🔎", layout="centered")
+st.title("🔎 DigitalData Checker (Adobe)")
 
 with st.form(key="digitaldata_form"):
     url = st.text_input("Enter a webpage URL")
@@ -62,16 +60,13 @@ if submitted:
         if data:
             st.success("✅ digitalData found!")
 
-            # Flatten and show in table
             flat_data = flatten_json(data)
             df = pd.DataFrame(flat_data.items(), columns=["Key", "Value"])
             st.subheader("🔍 Flattened DigitalData")
             st.dataframe(df, use_container_width=True)
 
-            # Show full JSON structure
             st.subheader("🧾 Raw digitalData JSON")
             st.json(data)
-
         else:
             st.error("❌ digitalData not found on this page.")
     else:

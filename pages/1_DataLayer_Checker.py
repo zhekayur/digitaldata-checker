@@ -1,10 +1,9 @@
-# pages/1_DataLayer_Checker.py
-
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
-import json
 import time
 
 # Function to fetch dataLayer using Selenium
@@ -14,10 +13,9 @@ def get_data_layer(url):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(options=chrome_options)
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.get(url)
-
-    # Wait for JavaScript to render
     time.sleep(3)
 
     try:
@@ -36,10 +34,10 @@ def flatten_data_layer(data_layer):
     return pd.DataFrame(flat_rows)
 
 # UI
-st.set_page_config(page_title="DataLayer Checker", layout="centered")
-st.title("📦 DataLayer Checker (for Google Analytics)")
+st.set_page_config(page_title="DataLayer Checker", page_icon="📦", layout="centered")
+st.title("📦 DataLayer Checker (Google Analytics)")
 
-with st.form(key="digitaldata_form"):
+with st.form(key="datalayer_form"):
     url = st.text_input("Enter a webpage URL")
     submitted = st.form_submit_button("Find")
 
