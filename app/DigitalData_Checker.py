@@ -7,7 +7,33 @@ import json
 import pandas as pd
 import time
 
-# Fetch digitalData using Selenium
+# Inject GTM into <head>
+st.markdown("""
+<!-- Google Tag Manager -->
+<script>
+(function(w,d,s,l,i){w[l]=w[l]||[];
+w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+j.async=true;
+j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TBPNMM9H');
+</script>
+<!-- End Google Tag Manager -->
+""", unsafe_allow_html=True)
+
+# Inject GTM <noscript> into <body>
+st.markdown("""
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBPNMM9H"
+height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+""", unsafe_allow_html=True)
+
+# Function to fetch digitalData using Selenium
 def get_digital_data(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
@@ -35,10 +61,8 @@ def flatten_json(y):
             for a in x:
                 flatten(x[a], f'{name}{a}_')
         elif isinstance(x, list):
-            i = 0
-            for a in x:
+            for i, a in enumerate(x):
                 flatten(a, f'{name}{i}_')
-                i += 1
         else:
             out[name[:-1]] = x
 
