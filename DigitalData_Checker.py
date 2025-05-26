@@ -1,21 +1,20 @@
+# DigitalData_Checker.py
+
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import json
 import pandas as pd
 import time
 
-# Function to fetch digitalData using Selenium
+# Fetch digitalData using Selenium
 def get_digital_data(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     time.sleep(3)
 
@@ -27,7 +26,7 @@ def get_digital_data(url):
     driver.quit()
     return digital_data
 
-# Helper to flatten nested JSON
+# Flatten nested JSON
 def flatten_json(y):
     out = {}
 
@@ -36,8 +35,10 @@ def flatten_json(y):
             for a in x:
                 flatten(x[a], f'{name}{a}_')
         elif isinstance(x, list):
-            for i, a in enumerate(x):
+            i = 0
+            for a in x:
                 flatten(a, f'{name}{i}_')
+                i += 1
         else:
             out[name[:-1]] = x
 

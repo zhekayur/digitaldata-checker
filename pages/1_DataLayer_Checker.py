@@ -1,20 +1,20 @@
+# pages/1_DataLayer_Checker.py
+
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
+import json
 import time
 
-# Function to fetch dataLayer using Selenium
+# Fetch dataLayer using Selenium
 def get_data_layer(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     time.sleep(3)
 
@@ -26,20 +26,20 @@ def get_data_layer(url):
     driver.quit()
     return data_layer
 
-# Helper to flatten dataLayer (list of dicts)
+# Flatten list of objects in dataLayer
 def flatten_data_layer(data_layer):
     flat_rows = []
     for obj in data_layer:
         flat_rows.append({k: str(v) for k, v in obj.items()})
     return pd.DataFrame(flat_rows)
 
-# UI
+# Streamlit UI
 st.set_page_config(page_title="DataLayer Checker", page_icon="📦", layout="centered")
 st.title("📦 DataLayer Checker (Google Analytics)")
 
 with st.form(key="datalayer_form"):
     url = st.text_input("Enter a webpage URL")
-    submitted = st.form_submit_button("Find")
+    submitted = st.form_submit_button("Check dataLayer")
 
 if submitted:
     if url:
